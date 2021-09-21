@@ -36,7 +36,9 @@ final class RouteServiceProvider extends ServiceProvider
                 ->group(require base_path('routes/web.php'));
         });
 
-        $this->mapAssetRoutes();
+        if ($this->app->runningUnitTests() === false) {
+            $this->mapAssetRoutes();
+        }
     }
 
     protected function mapAssetRoutes(): void
@@ -44,7 +46,7 @@ final class RouteServiceProvider extends ServiceProvider
         /** @var SourceRepositoryInterface $source */
         $source = $this->app->make(SourceRepositoryInterface::class);
 
-        $source->fetchStoredDomains()->each(function (string $domain) {
+        $source->fetchCachedDomains()->each(static function (string $domain): void {
             Route::middleware('web')
                 ->domain($domain)
                 ->group(static function (Router $router): void {

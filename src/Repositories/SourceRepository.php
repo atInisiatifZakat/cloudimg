@@ -8,8 +8,8 @@ use ReflectionClass;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
 use Illuminate\Support\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Cache\Factory;
+use Illuminate\Database\Eloquent\Model;
 use FromHome\Cloudimg\Exceptions\SourceDoesNotExist;
 use FromHome\Cloudimg\Contract\Models\SourceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -18,6 +18,7 @@ use FromHome\Cloudimg\Contract\Repositories\SourceRepositoryInterface;
 final class SourceRepository implements SourceRepositoryInterface
 {
     private Factory $cache;
+
     private SourceInterface $source;
 
     public function __construct(SourceInterface $source, Factory $cache)

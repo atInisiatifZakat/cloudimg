@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace FromHome\Cloudimg\Listeners;
 
 use FromHome\Cloudimg\Events\SourceWasCreated;
@@ -28,7 +30,7 @@ final class DomainCacheRefreshListener
     /**
      * @param object $event
      */
-    protected function compatibleEvent($event): bool
+    private function compatibleEvent($event): bool
     {
         return $event instanceof SourceWasCreated || $event instanceof SourceWasUpdated;
     }

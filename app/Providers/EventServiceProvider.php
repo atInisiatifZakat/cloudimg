@@ -18,10 +18,10 @@ final class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
         SourceWasCreated::class => [
-            DomainCacheRefreshListener::class
+            DomainCacheRefreshListener::class,
         ],
         SourceWasUpdated::class => [
-            DomainCacheRefreshListener::class
+            DomainCacheRefreshListener::class,
         ],
     ];
 }
