@@ -20,50 +20,47 @@ use FromHome\Cloudimg\Http\Middleware\PreventAccessMainDomain;
 
 final class Routes
 {
-    private static ?Router $router = null;
+    private Router $router;
 
-    private function __construct()
+    private function __construct(Router $router)
     {
+        $this->router = $router;
     }
 
     public static function create(Router $router): self
     {
-        if (self::$router === null) {
-            self::$router = $router;
-        }
-
-        return new self();
+        return new self($router);
     }
 
     public function authApi(): self
     {
-        $this->router()->post('/auth/login', AuthLoginController::class);
-        $this->router()->get('/auth/logout', AuthLogoutController::class);
+        $this->router->post('/auth/login', AuthLoginController::class);
+        $this->router->get('/auth/logout', AuthLogoutController::class);
 
         return $this;
     }
 
     public function profileApi(): self
     {
-        $this->router()->get('/profile', ProfileController::class);
+        $this->router->get('/profile', ProfileController::class);
 
         return $this;
     }
 
     public function sourceApi(): self
     {
-        $this->router()->get('/source', FilterSourceController::class);
-        $this->router()->post('/source', CreateSourceController::class);
-        $this->router()->get('/source/{sourceId}', DetailSourceController::class);
-        $this->router()->put('/source/{sourceId}', UpdateSourceController::class);
-        $this->router()->get('/source/{sourceId}/provider', ShowProviderController::class);
+        $this->router->get('/source', FilterSourceController::class);
+        $this->router->post('/source', CreateSourceController::class);
+        $this->router->get('/source/{sourceId}', DetailSourceController::class);
+        $this->router->put('/source/{sourceId}', UpdateSourceController::class);
+        $this->router->get('/source/{sourceId}/provider', ShowProviderController::class);
 
         return $this;
     }
 
     public function renderAsset(): self
     {
-        $this->router()->get('/{any?}', RenderAssetController::class)
+        $this->router->get('/{any?}', RenderAssetController::class)
             ->where('any', '.*')
             ->middleware(PreventAccessMainDomain::class);
 
@@ -72,24 +69,15 @@ final class Routes
 
     public function authPage(): self
     {
-        $this->router()->get('/auth/login', [AuthPage::class, 'login'])->name('login')->middleware('guest');
+        $this->router->get('/auth/login', [AuthPage::class, 'login'])->name('login')->middleware('guest');
 
         return $this;
     }
 
     public function homePage(): self
     {
-        $this->router()->get('/home', HomePage::class);
+        $this->router->get('/home', HomePage::class);
 
         return $this;
-    }
-
-    /**
-     * @psalm-suppress InvalidNullableReturnType
-     * @psalm-suppress NullableReturnStatement
-     */
-    private function router(): Router
-    {
-        return self::$router;
     }
 }
