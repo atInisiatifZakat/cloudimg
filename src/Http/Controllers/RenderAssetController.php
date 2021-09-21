@@ -24,14 +24,12 @@ final class RenderAssetController
         ExceptionHandler $handler
     ): StreamedResponse {
         try {
-            $hostname = $request->getHost();
+            $domain = $request->getHost();
 
-            $subdomain = $this->makeSubdomain($hostname);
-
-            $source = $repository->findUsingDomain($subdomain);
+            $source = $repository->findUsingDomain($domain);
 
             if ($source === null) {
-                throw SourceDoesNotExist::withDomain($subdomain);
+                throw SourceDoesNotExist::withDomain($domain);
             }
 
             $server = $serverFactory->makeFromSource($source);
