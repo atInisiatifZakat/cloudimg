@@ -1,0 +1,36 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "npm run development",
+        "development": "mix",
+        "watch": "mix watch",
+        "watch-poll": "mix watch -- --watch-options-poll=1000",
+        "hot": "mix watch --hot",
+        "prod": "npm run production",
+        "production": "mix --production"
+    },
+    "devDependencies": {
+        "@babel/preset-react": "^7.14.5",
+        "@chakra-ui/react": "^1.6.7",
+        "@emotion/react": "^11.4.1",
+        "@emotion/styled": "^11.3.0",
+        "@inertiajs/inertia": "^0.10.1",
+        "@inertiajs/inertia-react": "^0.7.1",
+        "@inertiajs/progress": "^0.2.6",
+        "axios": "^0.21.1",
+        "camelcase-keys": "^7.0.0",
+        "eslint": "^7.32.0",
+        "eslint-plugin-react": "^7.24.0",
+        "formik": "^2.2.9",
+        "framer-motion": "^4.1.17",
+        "laravel-mix": "^6.0.29",
+        "prettier": "2.3.2",
+        "prop-types": "^15.7.2",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "react-helmet": "^6.1.0",
+        "react-icons": "^4.2.0",
+        "snakecase-keys": "^4.0.2",
+        "yup": "^0.32.9"
+    }
+}
