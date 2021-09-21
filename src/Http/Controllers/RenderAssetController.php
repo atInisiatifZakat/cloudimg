@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace FromHome\Cloudimg\Http\Controllers;
 
 use Exception;
-use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use FromHome\Cloudimg\Supports\Path;
 use FromHome\Cloudimg\GlideServerFactory;
 use Illuminate\Contracts\Debug\ExceptionHandler;
+use League\Glide\Responses\SymfonyResponseFactory;
 use FromHome\Cloudimg\Exceptions\SourceDoesNotExist;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use FromHome\Cloudimg\Exceptions\NotASubdomainException;
 use FromHome\Cloudimg\Contract\Repositories\SourceRepositoryInterface;
 
 final class RenderAssetController
@@ -21,7 +21,8 @@ final class RenderAssetController
         Request $request,
         SourceRepositoryInterface $repository,
         GlideServerFactory $serverFactory,
-        ExceptionHandler $handler
+        ExceptionHandler $handler,
+        SymfonyResponseFactory $response
     ): StreamedResponse {
         try {
             $domain = $request->getHost();
@@ -34,8 +35,13 @@ final class RenderAssetController
 
             $server = $serverFactory->makeFromSource($source);
 
+            if (Path::isImage($path)) {
+                /** @psalm-var StreamedResponse */
+                return $server->getImageResponse($path, (array) $request->query());
+            }
+
             /** @psalm-var StreamedResponse */
-            return $server->getImageResponse($path, (array) $request->query());
+            return $response->create($server->getSource(), $path);
         } catch (Exception $exception) {
             /** @noinspection PhpUnhandledExceptionInspection */
             $handler->report($exception);
@@ -53,21 +59,5 @@ final class RenderAssetController
 
         /** @psalm-var StreamedResponse */
         return $server->getImageResponse($path, []);
-    }
-
-    private function makeSubdomain(string $hostname): string
-    {
-        $parts = \explode('.', $hostname);
-
-        $isLocalhost = \count($parts) === 1;
-        $isIpAddress = \count(\array_filter($parts, 'is_numeric')) === \count($parts);
-
-        $notADomain = $isLocalhost || $isIpAddress;
-
-        if ($notADomain) {
-            throw new NotASubdomainException($hostname);
-        }
-
-        return (string) Arr::first($parts);
     }
 }

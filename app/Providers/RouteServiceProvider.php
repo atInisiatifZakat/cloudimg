@@ -36,9 +36,7 @@ final class RouteServiceProvider extends ServiceProvider
                 ->group(require base_path('routes/web.php'));
         });
 
-        if ($this->app->runningUnitTests() === false) {
-            $this->mapAssetRoutes();
-        }
+        $this->mapAssetRoutes();
     }
 
     protected function mapAssetRoutes(): void
