@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use FromHome\Cloudimg\Policies\SourcePolicy;
 use FromHome\Cloudimg\Contract\Models\SourceInterface;
+use FromHome\Cloudimg\Commands\CacheSourceDomainCommand;
 use FromHome\Cloudimg\Contract\Repositories\SourceRepositoryInterface;
 
 final class CloudimgServiceProvider extends ServiceProvider
@@ -34,6 +35,10 @@ final class CloudimgServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__ . '/../../database/migrations/2021_08_30_185910_create_sources_table.php' => $migrationPath,
             ], 'cloudimg-migration');
+
+            $this->commands([
+                CacheSourceDomainCommand::class,
+            ]);
         }
     }
 

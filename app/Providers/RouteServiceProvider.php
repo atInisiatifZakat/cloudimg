@@ -10,6 +10,7 @@ use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\RateLimiter;
+use FromHome\Cloudimg\Contract\Repositories\SourceRepositoryInterface;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 
 final class RouteServiceProvider extends ServiceProvider
@@ -33,8 +34,19 @@ final class RouteServiceProvider extends ServiceProvider
             Route::middleware('web')
                 ->domain($domain)
                 ->group(require base_path('routes/web.php'));
+        });
 
+        $this->mapAssetRoutes();
+    }
+
+    protected function mapAssetRoutes(): void
+    {
+        /** @var SourceRepositoryInterface $source */
+        $source = $this->app->make(SourceRepositoryInterface::class);
+
+        $source->fetchStoredDomains()->each(function (string $domain) {
             Route::middleware('web')
+                ->domain($domain)
                 ->group(static function (Router $router): void {
                     Routes::create($router)->renderAsset();
                 });

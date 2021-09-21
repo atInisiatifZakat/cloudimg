@@ -63,7 +63,8 @@ final class Routes
 
     public function renderAsset(): self
     {
-        $this->router()->get('/{path}', RenderAssetController::class)
+        $this->router()->get('/{any?}', RenderAssetController::class)
+            ->where('any', '.*')
             ->middleware(PreventAccessMainDomain::class);
 
         return $this;

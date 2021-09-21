@@ -7,7 +7,9 @@ namespace FromHome\Cloudimg\Repositories;
 use ReflectionClass;
 use Illuminate\Http\Request;
 use InvalidArgumentException;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Cache\Factory;
 use FromHome\Cloudimg\Exceptions\SourceDoesNotExist;
 use FromHome\Cloudimg\Contract\Models\SourceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -15,10 +17,12 @@ use FromHome\Cloudimg\Contract\Repositories\SourceRepositoryInterface;
 
 final class SourceRepository implements SourceRepositoryInterface
 {
+    private Factory $cache;
     private SourceInterface $source;
 
-    public function __construct(SourceInterface $source)
+    public function __construct(SourceInterface $source, Factory $cache)
     {
+        $this->cache = $cache;
         $this->source = $source;
     }
 
@@ -46,6 +50,24 @@ final class SourceRepository implements SourceRepositoryInterface
             ->where('user_id', $request->user()->getKey())
             ->paginate((int) $request->query('limit'))
             ->appends((array) $request->query());
+    }
+
+    public function fetchCachedDomains(bool $forget = false): Collection
+    {
+        if ($forget) {
+            $this->cache->store()->forget('source_domains');
+        }
+
+        /** @psalm-var Collection */
+        return $this->cache->store()->rememberForever('source_domains', function () {
+            return $this->fetchStoredDomains();
+        });
+    }
+
+    public function fetchStoredDomains(): Collection
+    {
+        /** @psalm-var Collection */
+        return $this->getModel()->newQuery()->pluck('domain');
     }
 
     private function getModel(): Model
