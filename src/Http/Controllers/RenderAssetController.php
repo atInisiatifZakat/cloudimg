@@ -37,8 +37,14 @@ final class RenderAssetController
 
             if (Path::isImage($path)) {
                 /** @psalm-var StreamedResponse */
-                return $server->getImageResponse($path, (array) $request->query());
+                $response = $server->getImageResponse($path, (array) $request->query());
+            
+                $response->headers->set('Access-Control-Allow-Origin', '*');
+                
+                return $response;
             }
+                
+            $response->headers->set('Access-Control-Allow-Origin', '*');
 
             /** @psalm-var StreamedResponse */
             return $response->create($server->getSource(), $path);
