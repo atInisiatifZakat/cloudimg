@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace FromHome\Cloudimg;
 
+use Fruitcake\Cors\HandleCors;
 use Illuminate\Routing\Router;
 use FromHome\Cloudimg\Http\Pages\AuthPage;
 use FromHome\Cloudimg\Http\Pages\HomePage;
@@ -62,7 +63,8 @@ final class Routes
     {
         $this->router->get('/{any}', RenderAssetController::class)
             ->where('any', '.*')
-            ->middleware(PreventAccessMainDomain::class);
+            ->middleware(PreventAccessMainDomain::class)
+            ->withoutMiddleware([HandleCors::class]);
 
         return $this;
     }
