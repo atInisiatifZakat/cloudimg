@@ -22,7 +22,7 @@ final class RenderAssetController
         SourceRepositoryInterface $repository,
         GlideServerFactory $serverFactory,
         ExceptionHandler $handler,
-        SymfonyResponseFactory $response
+        SymfonyResponseFactory $responseFactory
     ): StreamedResponse {
         try {
             $domain = $request->getHost();
@@ -43,11 +43,13 @@ final class RenderAssetController
                 
                 return $response;
             }
-                
-            $response->headers->set('Access-Control-Allow-Origin', '*');
 
             /** @psalm-var StreamedResponse */
-            return $response->create($server->getSource(), $path);
+            $response = $responseFactory->create($server->getSource(), $path);
+
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+        
+            return $response;
         } catch (Exception $exception) {
             /** @noinspection PhpUnhandledExceptionInspection */
             $handler->report($exception);
